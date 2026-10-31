@@ -341,10 +341,11 @@ function rebuild() {
     it.status = isRow ? (r0.type === 'skip' || r0.m?.status === 'skip' ? 'skip' : (r0.m?.status || 'new')) : (rows.some(r => r.m.status === 'check') ? 'check' : 'ok');
     it.title = d?.t || (r0.query || r0.title); it.year = d?.y || +r0.qyear || +r0.year || null;
     it.cat = r0.kind === 'Course' ? 'Course' : isRow ? (it.status === 'skip' ? 'Other' : 'Unmatched')
-      : d?.g?.includes('Documentary') ? 'Documentary' : it.type === 'tv' ? 'Series' : 'Film';
+      : d?.g?.includes('Documentary') ? 'Documentary' : d?.g?.includes('Animation') ? 'Animation' : it.type === 'tv' ? 'Series' : 'Film';
     S.items.push(it); S.byKey.set(key, it);
   }
 }
+const genresOf = (it, full = false) => it.d?.g?.includes('Animation') && !full ? ['Animation'] : (it.d?.g || []);
 const lib = () => S.items.filter(i => i.cat !== 'Other' && i.cat !== 'Unmatched');
 function snapItem(key, snap) { return { key, type: snap?.type || null, id: snap?.id || null, title: snap?.t || '?', year: snap?.y || null, snap, d: null, ext: true, cat: snap?.type === 'tv' ? 'Series' : 'Film', rows: [] } }
 function getItem(key) {
@@ -441,20 +442,20 @@ function home() {
   if (!S.rows.length) { main.innerHTML = `<div class="page"><h1>Welcome</h1><p class="sub">Your library is empty. Go to <a href="#settings">Settings</a>, paste your TMDB token and import your CSV.</p></div>`; return }
   if (S.q) return searchView();
   let L = lib();
-  const tabs = [['all', 'Everything'], ['Film', 'Films'], ['Series', 'Series'], ['Documentary', 'Documentaries'], ['Course', 'Courses']];
+  const tabs = [['all', 'Everything'], ['Film', 'Films'], ['Series', 'Series'], ['Animation', 'Animation'], ['Documentary', 'Documentaries'], ['Course', 'Courses']];
   if (S.homeTab !== 'all') L = L.filter(i => i.cat === S.homeTab);
   const R = []; let pend = null;
   const add = (t, list) => { if (list.length) { R.push([t, list, pend]); pend = null } };
   const inTab = it => S.homeTab === 'all' || it.cat === S.homeTab;
   add('Our wishlist', markedItems('wish').filter(inTab).sort((a, b) => b._t - a._t));
   add('In the library, not watched yet', L.filter(i => !has(i.key, 'watched') && !has(i.key, 'anti')).sort(byRating));
-  if (S.homeTab === 'all') { add('Films', L.filter(i => i.cat === 'Film').sort(byRating)); add('Series', L.filter(i => i.cat === 'Series').sort(byRating));
+  if (S.homeTab === 'all') { add('Films', L.filter(i => i.cat === 'Film').sort(byRating)); add('Series', L.filter(i => i.cat === 'Series').sort(byRating)); add('Animation', L.filter(i => i.cat === 'Animation').sort(byRating));
     add('Documentaries', L.filter(i => i.cat === 'Documentary').sort(byRating)); add('Courses', L.filter(i => i.cat === 'Course')) }
   add('Top rated', L.filter(i => (i.d?.r || 0) >= 7.8 && (i.d?.n || 0) > 50).sort(byRating));
   const sec = { push: ([, t]) => { pend = t } };
   const count = f => { const m = new Map(); for (const i of L) for (const k of f(i) || []) m.set(k, (m.get(k) || 0) + 1); return [...m].sort((a, b) => b[1] - a[1]) };
-  const G = count(i => i.d?.g).filter(([, n]) => n >= 4);
-  sec.push([R.length, 'By genre']); for (const [g] of G) add(g, L.filter(i => i.d?.g?.includes(g)).sort(byRating));
+  const G = count(i => genresOf(i, S.homeTab === 'Animation')).filter(([g, n]) => n >= 4 && !(S.homeTab === 'Animation' && g === 'Animation'));
+  sec.push([R.length, 'By genre']); for (const [g] of G) add(g, L.filter(i => genresOf(i, S.homeTab === 'Animation').includes(g)).sort(byRating));
   const D = count(i => i.d?.d).filter(([, n]) => n >= 2).slice(0, 20);
   sec.push([R.length, 'By director']); for (const [d] of D) add('Directed by ' + d, L.filter(i => i.d?.d?.includes(d)).sort(byYear));
   const dec = count(i => i.year ? [Math.floor(i.year / 10) * 10] : []).sort((a, b) => b[0] - a[0]);
@@ -560,11 +561,11 @@ function explore() {
   if (!L.length) { main.innerHTML = `<div class="page"><h1>Explore</h1><p class="sub">Nothing to explore yet. Import your list and run matching in <a href="#settings">Settings</a>.</p></div>`; return }
   loadGenres().then(() => { if (location.hash === '#explore' && !S._genOk && Object.keys(S.gen).length) { S._genOk = 1; explore() } });
   const e = S.ex;
-  const genres = [...new Set(L.flatMap(i => i.d.g))].sort(), dirs = [...new Map(L.flatMap(i => i.d.d).map(d => [d, 1])).keys()].sort();
+  const genres = [...new Set(L.flatMap(i => genresOf(i)))].sort(), dirs = [...new Map(L.flatMap(i => i.d.d).map(d => [d, 1])).keys()].sort();
   let seeds = L;
   if (e.seed === 'watched') seeds = L.filter(i => has(i.key, 'watched'));
   else if (e.seed === 'wish') seeds = [...L.filter(i => has(i.key, 'wish'))];
-  else if (e.seed.startsWith('g:')) seeds = L.filter(i => i.d.g.includes(e.seed.slice(2)));
+  else if (e.seed.startsWith('g:')) seeds = L.filter(i => genresOf(i).includes(e.seed.slice(2)));
   else if (e.seed.startsWith('d:')) seeds = L.filter(i => i.d.d.includes(e.seed.slice(2)));
   else if (e.seed.startsWith('c:')) seeds = L.filter(i => i.cat === e.seed.slice(2));
   const libKeys = new Set(S.items.map(i => i.key)), agg = new Map();
@@ -576,14 +577,14 @@ function explore() {
   let res = [...agg.entries()].filter(([k, a]) => a.s > 0 && a.x.t
     && !uids(k, 'anti').length && !(e.hide && (has(k, 'watched') || has(k, 'wish')))
     && (e.type === 'both' || a.x.type === e.type) && (a.x.r || 0) >= +e.min && (!e.from || (a.x.y || 0) >= +e.from)
-    && (!gid || a.x.g.some(g => gid.includes(g))));
+    && (!gid || a.x.g.some(g => gid.includes(g))) && (e.genre === 'Animation' || !e.genre || !a.x.g.includes(16)));
   res.forEach(([, a]) => a.score = a.s + ((a.x.r || 0) - 6.5) * 0.25 + Math.log10(1 + a.x.n) * 0.15);
   res.sort((a, b) => b[1].score - a[1].score); res = res.slice(0, 150);
   const opt = (v, l, cur) => `<option value="${esc(v)}" ${cur === v ? 'selected' : ''}>${esc(l)}</option>`;
   const allG = [...new Set(Object.values(S.gen))].sort();
   main.innerHTML = `<div class="page"><h1>Explore</h1><p class="sub">From ${seeds.length} of your titles: what TMDB recommends next, minus what's already in your library${e.hide ? ' or marked' : ''}.</p>
 <div class="flt"><label>Based on <select class="in" data-ch="ex.seed">${opt('all', 'Whole library', e.seed)}${opt('watched', 'What we watched', e.seed)}${opt('wish', 'Our wishlist', e.seed)}
-<optgroup label="Type">${['Film', 'Series', 'Documentary'].map(c => opt('c:' + c, c, e.seed)).join('')}</optgroup>
+<optgroup label="Type">${['Film', 'Series', 'Animation', 'Documentary'].map(c => opt('c:' + c, c, e.seed)).join('')}</optgroup>
 <optgroup label="Genre">${genres.map(g => opt('g:' + g, g, e.seed)).join('')}</optgroup><optgroup label="Director">${dirs.map(d => opt('d:' + d, d, e.seed)).join('')}</optgroup></select></label>
 <label>Show <select class="in" data-ch="ex.type">${opt('both', 'Films + series', e.type)}${opt('movie', 'Films', e.type)}${opt('tv', 'Series', e.type)}</select></label>
 <label>Genre <select class="in" data-ch="ex.genre">${opt('', 'Any', e.genre)}${allG.map(g => opt(g, g, e.genre)).join('')}</select></label>
@@ -718,7 +719,7 @@ const A = {
   herotrailer: () => { const it = S.byKey.get(S.heroKey); clearTimeout(S._ht); if (it) heroPlay(it, false) },
   mute: el => { const ifr = $('#hv iframe'); if (!ifr) return; const m = !el.dataset.muted; ytCmd(ifr, m ? 'mute' : 'unMute'); setMuteBtn(m) },
   mtrailer: () => { const it = getItem(S.modalKey); if (!it?.d?.tr) return; $('#mtr').innerHTML = `<iframe allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="${yt(it.d.tr, '&autoplay=1')}"></iframe>`; $('#mhero').classList.add('playing'); const h = $('#hv iframe'); if (h) ytCmd(h, 'mute') },
-  genre: el => { const g = el.dataset.v; closeModal(); openBrowse(g, lib().filter(i => i.d?.g?.includes(g))) },
+  genre: el => { const g = el.dataset.v; closeModal(); openBrowse(g, lib().filter(i => genresOf(i).includes(g))) },
   person: el => { const p = el.dataset.v; closeModal(); openBrowse(p, lib().filter(i => i.d?.d?.includes(p) || i.d?.c?.includes(p))) },
   fixrow: el => { S.fixFocus = el.dataset.v; closeModal(); if (location.hash === '#fix') fix(); else location.hash = 'fix' },
   ltab: el => { S.listTab = el.dataset.v; lists() },
@@ -756,7 +757,8 @@ document.addEventListener('submit', async e => {
   const fd = new FormData(f), t = f.dataset.form;
   if (t === 'login') {
     $('.err').textContent = '';
-    try { S.user = await store.signIn(fd.get('e').trim(), fd.get('p')); await loadAll() } catch (er) { $('.err').textContent = er.code === 'auth/invalid-credential' ? 'Wrong email or password' : (er.code || er.message) }
+    try { S.user = await store.signIn(fd.get('e').trim(), fd.get('p')) } catch (er) { $('.err').textContent = er.code === 'auth/invalid-credential' ? 'Wrong email or password' : (er.code || er.message); return }
+    await loadAll()
   } else if (t === 'name') {
     const n = fd.get('n').trim(); if (!n) return; S.users[S.me] = { ...(S.users[S.me] || {}), name: n }; store.put('users', S.me, { name: n }); await store.flush(); toast('Saved')
   } else if (t === 'profile') {
@@ -794,7 +796,11 @@ function pickProfile(id) {
 async function loadAll() {
   $('#app').innerHTML = '<div class="login"><p class="sub">Loading your library…</p></div>';
   try { S.view = localStorage.getItem('kino-view') || 'us' } catch {}
-  const [rows, titles, settings, users] = await Promise.all([store.all('library'), store.all('titles'), store.get('meta', 'settings'), store.all('users')]);
+  let rows, titles, settings, users;
+  const slow = setTimeout(() => { const p = $('#app .sub'); if (p) p.innerHTML = 'Still loading… If this stays, the database may be blocking access (check the Firestore rules email) or an ad-blocker may block firestore.googleapis.com.' }, 8000);
+  try { [rows, titles, settings, users] = await Promise.all([store.all('library'), store.all('titles'), store.get('meta', 'settings'), store.all('users')]) }
+  catch (e) { clearTimeout(slow); console.error(e); $('#app').innerHTML = `<div class="login"><h1>Can't open the library</h1><p class="sub">${esc(e.code || e.message)}</p><p class="sub">${e.code === 'permission-denied' ? 'The database rules refused this login. Check the email in Firestore → Rules matches your login exactly (lowercase), then Publish.' : 'Send this message to Claude.'}</p>${store.mode === 'cloud' ? '<button class="b" data-act="signout">Sign out</button>' : ''}</div>`; return }
+  clearTimeout(slow);
   S.rows = rows; S.titles = new Map(titles.map(({ id, ...d }) => [id, d])); S.settings = settings || {}; S.users = Object.fromEntries(users.map(({ id, ...u }) => [id, u]));
   rebuild();
   let saved = null; try { saved = localStorage.getItem('kino-profile') } catch {}
