@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0c0c0f">
+<title>Kinotēka</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c0f;--bg2:#16161b;--bg3:#1f1f26;--line:#2a2a33;--tx:#eceae4;--mut:#9b99a4;--acc:#ff8a3d;--ok:#5fd68a;--wish:#6aa8ff;--anti:#ff5c7a;--r:10px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+h1,h2,h3,.logo{font-family:"Space Grotesk",Inter,sans-serif;letter-spacing:-.01em}
+.hidden{display:none!important}
+/* header */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;padding:12px 4vw;background:linear-gradient(#0c0c0fee,#0c0c0fcc);backdrop-filter:blur(10px);border-bottom:1px solid #ffffff0d}
+.logo{font-weight:700;font-size:20px;color:var(--acc);text-decoration:none;white-space:nowrap}
+nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav a{padding:6px 10px;border-radius:8px;text-decoration:none;color:var(--mut);white-space:nowrap}
+nav a.on,nav a:hover{color:var(--tx);background:var(--bg3)}
+.hright{margin-left:auto;display:flex;align-items:center;gap:8px}
+#q{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:200px}
+.pill{background:var(--bg3);border:1px solid var(--line);border-radius:99px;padding:5px 10px;cursor:pointer;font-size:13px;white-space:nowrap}
+.pill b{color:var(--acc)}
+#bar{position:fixed;left:0;right:0;top:0;height:3px;z-index:60;background:var(--acc);transform-origin:left;transform:scaleX(0);transition:transform .2s}
+#barTxt{position:fixed;right:12px;bottom:12px;z-index:60;background:var(--bg3);border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-size:13px}
+.banner{margin:12px 4vw;padding:10px 14px;border:1px dashed var(--acc);border-radius:8px;color:var(--mut);font-size:13px}
+main{padding-bottom:60px}
+.page{padding:18px 4vw}
+.page h1{margin:6px 0 4px;font-size:30px}
+.sub{color:var(--mut);margin:0 0 16px}
+/* hero */
+.hero{position:relative;height:min(76vh,700px);min-height:420px;overflow:hidden;background:#000 var(--img) center/cover no-repeat}
+.hv{position:absolute;inset:0;opacity:0;transition:opacity 1.2s}
+.hv.on{opacity:1}
+.hv iframe{position:absolute;top:50%;left:50%;width:max(100%,177.78vh);height:max(100%,56.25vw);transform:translate(-50%,-50%);border:0;pointer-events:none}
+.hshade{position:absolute;inset:0;background:linear-gradient(90deg,#0c0c0fee 0%,#0c0c0f99 35%,transparent 70%),linear-gradient(0deg,var(--bg) 0%,transparent 40%)}
+.hinfo{position:absolute;left:4vw;bottom:12%;max-width:560px}
+.hinfo h1{font-size:clamp(30px,5vw,58px);line-height:1;margin:8px 0 12px}
+.hinfo p{color:#d6d4ce;margin:0 0 18px}
+.eyebrow{color:var(--acc);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.b{border:1px solid var(--line);background:var(--bg3);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.b:hover{border-color:#555}
+.b.pri{background:var(--tx);color:#111;border-color:var(--tx)}
+.b.ghost{background:#0006}
+.b.sm{padding:5px 10px;font-size:13px}
+.mk{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mb.on[data-mark=watched]{background:var(--ok);color:#06210f;border-color:var(--ok)}
+.mb.on[data-mark=wish]{background:var(--wish);color:#061226;border-color:var(--wish)}
+.mb.on[data-mark=anti]{background:var(--anti);color:#2a0610;border-color:var(--anti)}
+.who{font-size:12px;color:var(--mut)}
+/* rows */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding:14px 4vw 0}
+.tabs button{background:none;border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;color:var(--mut)}
+.tabs button.on{background:var(--tx);color:#111;border-color:var(--tx)}
+.sec{padding:22px 4vw 0;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.row{margin-top:18px}
+.rh{display:flex;align-items:baseline;gap:10px;padding:0 4vw}
+.rh h2{font-size:19px;margin:0 0 8px}
+.rh .n{color:var(--mut);font-size:13px}
+.rh button{margin-left:auto;background:none;border:0;color:var(--mut);cursor:pointer}
+.rh button:hover{color:var(--tx)}
+.sw{position:relative}
+.strip{display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:10px;overflow-x:auto;padding:4px 4vw 8px;scroll-snap-type:x proximity;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.arr{position:absolute;top:0;bottom:44px;width:4vw;min-width:32px;border:0;background:#0c0c0fcc;font-size:30px;cursor:pointer;opacity:0;transition:opacity .2s;z-index:2}
+.arr.l{left:0}.arr.r{right:0}
+.sw:hover .arr{opacity:1}
+@media (hover:none){.arr{display:none}}
+/* cards */
+.card{position:relative;cursor:pointer;scroll-snap-align:start;min-width:0}
+.pw{position:relative;aspect-ratio:2/3;border-radius:8px;overflow:hidden;background:var(--bg3);transition:transform .15s}
+.card:hover .pw{transform:scale(1.03);box-shadow:0 8px 30px #000a}
+.pw img{width:100%;height:100%;object-fit:cover;display:block}
+.np{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;background:linear-gradient(160deg,hsl(var(--h) 45% 32%),hsl(calc(var(--h) + 50) 50% 14%))}
+.np b{font-family:"Space Grotesk";font-size:18px;line-height:1.05}
+.np span{font-size:12px;color:#ddd;margin-top:6px}
+.cap{font-size:12.5px;margin-top:6px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap i{color:var(--mut);font-style:normal}
+.why{font-size:11.5px;color:var(--mut);line-height:1.25;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.badges{position:absolute;top:6px;left:6px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.bd{font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:99px}
+.bd.w{background:var(--ok);color:#06210f}.bd.s{background:var(--wish);color:#061226}.bd.a{background:var(--anti);color:#2a0610}
+.rt{position:absolute;top:6px;right:6px;font-size:11px;background:#000b;padding:2px 6px;border-radius:99px}
+.qa{position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;justify-content:flex-end;padding:8px;background:linear-gradient(transparent,#000c);opacity:0;transition:opacity .15s}
+.card:hover .qa{opacity:1}
+@media (hover:none){.qa{opacity:1;background:none;padding:6px}}
+.qb{width:30px;height:30px;border-radius:50%;border:1px solid #fff6;background:#000a;cursor:pointer;display:grid;place-items:center;padding:0}
+.qb svg{width:16px;height:16px}
+.qb.on[data-mark=watched]{background:var(--ok);border-color:var(--ok);color:#06210f}
+.qb.on[data-mark=wish]{background:var(--wish);border-color:var(--wish);color:#061226}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:18px 12px}
+/* modal */
+.modal{position:fixed;inset:0;z-index:40;background:#000c;overflow-y:auto;padding:4vh 12px}
+.mbox{max-width:980px;margin:0 auto;background:var(--bg2);border-radius:14px;overflow:hidden;position:relative}
+.x{position:absolute;right:12px;top:12px;z-index:5;width:38px;height:38px;border-radius:50%;border:0;background:#000b;font-size:22px;cursor:pointer}
+.mhero{position:relative;aspect-ratio:16/8;background:#000 var(--img) center/cover}
+.mhero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--bg2) 3%,transparent 60%);pointer-events:none}
+.mhero.playing::after{display:none}
+.mtr{position:absolute;inset:0;z-index:1}
+.mtr iframe{width:100%;height:100%;border:0}
+.mhead{position:absolute;left:28px;right:28px;bottom:18px;z-index:2}
+.mhero.playing .mhead{display:none}
+.mhead h2{font-size:clamp(24px,4vw,40px);margin:0 0 6px;line-height:1.05}
+.meta{color:#cfcdc7;font-size:14px;margin-bottom:12px}
+.mbody{padding:10px 28px 28px}
+.cols{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}
+.side div{margin-bottom:10px;font-size:14px}
+.side .l{color:var(--mut)}
+.lk{background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:#666;text-underline-offset:3px}
+.lk:hover{color:var(--acc)}
+.mbody h3{margin:26px 0 10px;font-size:17px}
+.prov{display:flex;flex-wrap:wrap;gap:18px}
+.pg span{display:block;font-size:12px;color:var(--mut);margin-bottom:6px}
+.pg img{width:42px;height:42px;border-radius:9px;margin-right:6px}
+.files{font-size:12.5px;color:var(--mut);font-family:ui-monospace,monospace}
+.small{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+@media (max-width:760px){.cols{grid-template-columns:1fr}.mbody{padding:10px 16px 22px}.mhead{left:16px;right:16px}.modal{padding:0}.mbox{border-radius:0;min-height:100%}.mhero{aspect-ratio:4/3}
+  #q{width:110px}.strip{grid-auto-columns:112px}header{gap:10px;padding:10px 3vw;flex-wrap:wrap}.hright{margin-left:auto}nav{order:3;width:100%}.hero{height:62vh}}
+/* forms */
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;max-width:760px}
+.panel h3{margin:0 0 10px}
+.in{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.flt{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:18px}
+.flt label{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
+.fix{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.fix .q{color:var(--mut);font-size:13px}
+.fix form{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.res{grid-column:1/-1;display:flex;gap:10px;overflow-x:auto}
+.mini{display:flex;gap:10px;align-items:center;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:6px;cursor:pointer;min-width:220px;text-align:left}
+.mini:hover{border-color:var(--acc)}
+.mini img,.mini .ph{width:40px;height:60px;object-fit:cover;border-radius:4px;background:#333;flex:none}
+.mini small{color:var(--mut);display:block}
+@media (max-width:760px){.fix{grid-template-columns:1fr}}
+.login{max-width:360px;margin:12vh auto;padding:0 20px}
+.login .in{width:100%;margin-bottom:10px}
+.err{color:var(--anti);font-size:13px;min-height:18px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--tx);color:#111;padding:10px 16px;border-radius:8px;z-index:70;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+#toast.on{opacity:1}
+.attrib{color:var(--mut);font-size:12px;margin-top:24px;max-width:760px}
+.empty{color:var(--mut);padding:30px 0}
+details summary{cursor:pointer;color:var(--mut);margin:16px 0 10px}
+</style>
+</head>
+<body>
+<div id="bar"></div><div id="barTxt" class="hidden"></div>
+<div id="app"><div class="login"><p class="sub">Loading…</p></div></div>
+<div id="modal" class="modal hidden"></div>
+<div id="toast"></div>
+<script>window.KINO_CONFIG = window.KINO_CONFIG || null;</script>
+<script src="config.js"></script>
+<script type="module">
+/* ============ basics ============ */
+const CFG = window.KINO_CONFIG || {};
+const IMG = 'https://image.tmdb.org/t/p/';
+const FBV = '10.12.2';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const yr = s => (s ? (+String(s).slice(0, 4) || null) : null);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const r1 = x => (x ? Math.round(x * 10) / 10 : 0);
+const hash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619) } return (h >>> 0).toString(36) };
+const sel = k => `"${CSS.escape(k)}"`;
+let store;
+const S = { user: null, users: {}, settings: {}, rows: [], titles: new Map(), marks: new Map(), items: [], byKey: new Map(), extra: new Map(),
+  live: new Map(), view: 'us', homeTab: 'all', q: '', heroKey: null, homeRows: [], browse: null, listTab: 'wish', listSort: 'added',
+  ex: { seed: 'all', type: 'both', min: '6.5', from: '', genre: '', hide: true }, busy: false, gen: {} };
+
+function toast(m, ms = 2600) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), ms) }
+function progress(done, total, label) {
+  const bar = $('#bar'), tx = $('#barTxt');
+  if (total == null) { bar.style.transform = 'scaleX(0)'; tx.classList.add('hidden'); return }
+  bar.style.transform = `scaleX(${total ? done / total : 0})`; tx.classList.remove('hidden'); tx.textContent = `${label} ${done}/${total}`;
+}
+const ICON = {
+  watched: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  wish: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  wishOn: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>',
+};
+
+/* ============ stores ============ */
+function localStore() {
+  const K = 'kino-local-v1'; let db;
+  try { db = JSON.parse(localStorage.getItem(K)) || {} } catch { db = {} }
+  const save = () => { try { localStorage.setItem(K, JSON.stringify(db)) } catch { toast('This browser ran out of local storage') } };
+  const col = c => db[c] || (db[c] = {});
+  const list = c => Object.entries(col(c)).map(([id, v]) => ({ id, ...JSON.parse(JSON.stringify(v)) }));
+  const merge = (a, b) => { for (const [k, v] of Object.entries(b)) { if (v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])) merge(a[k], v); else a[k] = v } return a };
+  const subs = {};
+  return {
+    mode: 'local',
+    async init() { return { uid: 'local', email: 'this device' } },
+    async signOut() {},
+    async all(c) { return list(c) },
+    async get(c, id) { return col(c)[id] || null },
+    put(c, id, data) { col(c)[id] = merge(col(c)[id] || {}, JSON.parse(JSON.stringify(data))); this._d = true },
+    async flush() { if (this._d) { save(); this._d = false } },
+    watch(c, cb) { subs[c] = cb; cb(list(c)) },
+    async mark(key, field, uid, on, snap) {
+      const m = col('marks')[key] || (col('marks')[key] = {}); m[field] = m[field] || {};
+      if (on) m[field][uid] = Date.now(); else delete m[field][uid];
+      if (snap) m.snap = snap; save(); subs.marks && subs.marks(list('marks'));
+    },
+  };
+}
+async function firebaseStore(cfg) {
+  const B = `https://www.gstatic.com/firebasejs/${FBV}/`;
+  const [A, Au, F] = await Promise.all([import(B + 'firebase-app.js'), import(B + 'firebase-auth.js'), import(B + 'firebase-firestore.js')]);
+  const app = A.initializeApp(cfg), auth = Au.getAuth(app);
+  let db;
+  try { db = F.initializeFirestore(app, { ignoreUndefinedProperties: true, localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }) }
+  catch { db = F.initializeFirestore(app, { ignoreUndefinedProperties: true }) }
+  let batch = null, n = 0;
+  const st = {
+    mode: 'cloud',
+    init() { return new Promise(res => { const un = Au.onAuthStateChanged(auth, u => { un(); res(u ? { uid: u.uid, email: u.email } : null) }) }) },
+    async signIn(email, pw) { const c = await Au.signInWithEmailAndPassword(auth, email, pw); return { uid: c.user.uid, email: c.user.email } },
+    signOut() { return Au.signOut(auth) },
+    async all(c) { const s = await F.getDocs(F.collection(db, c)); return s.docs.map(d => ({ id: d.id, ...d.data() })) },
+    async get(c, id) { const s = await F.getDoc(F.doc(db, c, id)); return s.exists() ? s.data() : null },
+    put(c, id, data) { if (!batch) { batch = F.writeBatch(db); n = 0 } batch.set(F.doc(db, c, id), data, { merge: true }); if (++n >= 150) return st.flush() },
+    async flush() { if (batch) { const b = batch; batch = null; n = 0; await b.commit() } },
+    watch(c, cb) { return F.onSnapshot(F.collection(db, c), s => cb(s.docs.map(d => ({ id: d.id, ...d.data() }))), e => toast('Sync error: ' + e.code)) },
+    async mark(key, field, uid, on, snap) {
+      const data = { [field]: { [uid]: on ? Date.now() : F.deleteField() } }; if (snap) data.snap = snap;
+      await F.setDoc(F.doc(db, 'marks', key), data, { merge: true });
+    },
+  };
+  return st;
+}
+
+/* ============ TMDB ============ */
+async function tmdb(path, params = {}, tries = 3) {
+  const tok = (S.settings.tmdb || '').trim();
+  if (!tok) throw new Error('Add your TMDB token in Settings first');
+  const u = new URL('https://api.themoviedb.org/3' + path);
+  for (const [k, v] of Object.entries(params)) if (v !== '' && v != null) u.searchParams.set(k, v);
+  const h = { accept: 'application/json' };
+  if (tok.length > 40) h.Authorization = 'Bearer ' + tok; else u.searchParams.set('api_key', tok);
+  let r;
+  try { r = await fetch(u, { headers: h }) } catch (e) { if (tries) { await sleep(1200); return tmdb(path, params, tries - 1) } throw e }
+  if ((r.status === 429 || r.status >= 500) && tries) { await sleep(1500); return tmdb(path, params, tries - 1) }
+  if (r.status === 401) throw new Error('TMDB rejected the token — check Settings');
+  if (!r.ok) throw new Error('TMDB error ' + r.status);
+  return r.json();
+}
+async function pool(items, n, fn) {
+  let i = 0; let err = null;
+  const run = async () => { while (i < items.length && !err) { const k = i++; try { await fn(items[k], k) } catch (e) { console.warn(e); if (/token/.test(e.message)) err = e } } };
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, run));
+  if (err) throw err;
+}
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9½]+/g, ' ').trim().replace(/^(the|a|an) /, '');
+function sim(a, b) {
+  a = norm(a); b = norm(b); if (!a || !b) return 0; if (a === b) return 1;
+  if (a.length < 2 || b.length < 2) return 0;
+  const bg = s => { const m = new Map(); for (let i = 0; i < s.length - 1; i++) { const g = s.slice(i, i + 2); m.set(g, (m.get(g) || 0) + 1) } return m };
+  const A = bg(a), Bm = bg(b); let x = 0; for (const [g, c] of A) x += Math.min(c, Bm.get(g) || 0);
+  return 2 * x / (a.length + b.length - 2);
+}
+async function searchTMDB(q, type, year) {
+  const p = { query: q, include_adult: 'false' };
+  if (year) p[type === 'movie' ? 'year' : 'first_air_date_year'] = year;
+  const j = await tmdb(`/search/${type}`, p);
+  return (j.results || []).map(x => ({ id: x.id, type, t: x.title || x.name, ot: x.original_title || x.original_name, y: yr(x.release_date || x.first_air_date), p: x.poster_path || null, n: x.vote_count || 0 }));
+}
+async function matchRow(row) {
+  const q = row.query || row.title, qy = +row.qyear || +row.year || 0;
+  const type = row.type === 'tv' ? 'tv' : 'movie';
+  let res = await searchTMDB(q, type, qy);
+  if (!res.length && qy) res = await searchTMDB(q, type, 0);
+  if (!res.length) res = await searchTMDB(q, type === 'movie' ? 'tv' : 'movie', 0);
+  if (!res.length) return { status: 'failed' };
+  let best = null;
+  for (const x of res.slice(0, 12)) {
+    const s = Math.max(sim(q, x.t), sim(q, x.ot)); const yd = qy && x.y ? Math.abs(qy - x.y) : null;
+    const sc = s * 2 - (yd == null ? 0.3 : Math.min(yd, 6) * 0.25) + Math.log10(1 + x.n) * 0.12;
+    if (!best || sc > best.sc) best = { ...x, s, yd, sc };
+  }
+  const exact = res.filter(x => Math.max(sim(q, x.t), sim(q, x.ot)) >= 0.95).length;
+  const ok = (best.s >= 0.8 && best.yd != null && best.yd <= 1) || (!qy && best.s >= 0.95 && exact === 1);
+  return { status: ok ? 'matched' : 'check', type: best.type, id: best.id, sim: r1(best.s) };
+}
+function compact(type, j) {
+  const crew = j.credits?.crew || [];
+  const dirs = type === 'movie' ? crew.filter(c => c.job === 'Director').map(c => c.name) : (j.created_by || []).map(c => c.name);
+  const vids = (j.videos?.results || []).filter(v => v.site === 'YouTube');
+  const tr = (vids.find(v => v.type === 'Trailer' && v.official) || vids.find(v => v.type === 'Trailer') || vids.find(v => v.type === 'Teaser') || vids[0])?.key || null;
+  const rec = (arr, src) => (arr || []).map(x => ({ id: x.id, type: x.media_type || type, t: x.title || x.name || '', y: yr(x.release_date || x.first_air_date), p: x.poster_path || null, b: x.backdrop_path || null, r: r1(x.vote_average), n: x.vote_count || 0, g: x.genre_ids || [], s: src }))
+    .filter(x => x.type === 'movie' || x.type === 'tv');
+  return {
+    t: j.title || j.name || '', ot: j.original_title || j.original_name || '', y: yr(j.release_date || j.first_air_date),
+    p: j.poster_path || null, b: j.backdrop_path || null, o: j.overview || '', r: r1(j.vote_average), n: j.vote_count || 0,
+    g: (j.genres || []).map(g => g.name).filter(Boolean), d: dirs.slice(0, 3), c: (j.credits?.cast || []).slice(0, 6).map(c => c.name),
+    rt: j.runtime || j.episode_run_time?.[0] || null, ns: j.number_of_seasons || null,
+    co: (j.production_countries || []).map(c => c.iso_3166_1).slice(0, 3), tr,
+    recs: [...rec(j.recommendations?.results, 'r').slice(0, 20), ...rec(j.similar?.results, 's').slice(0, 12)], at: Date.now(),
+  };
+}
+async function fetchDetails(type, id) {
+  const j = await tmdb(`/${type}/${id}`, { append_to_response: 'credits,videos,recommendations,similar', include_video_language: 'en,null' });
+  return compact(type, j);
+}
+async function liveDetails(type, id) {
+  const k = type + ':' + id;
+  if (S.titles.has(k)) return S.titles.get(k);
+  if (!S.live.has(k)) S.live.set(k, fetchDetails(type, id));
+  return S.live.get(k);
+}
+async function loadGenres() {
+  if (Object.keys(S.gen).length) return;
+  try { const c = JSON.parse(localStorage.getItem('kino-gen') || 'null'); if (c) { S.gen = c; return } } catch {}
+  try {
+    const [a, b] = await Promise.all([tmdb('/genre/movie/list'), tmdb('/genre/tv/list')]);
+    for (const g of [...a.genres, ...b.genres]) S.gen[g.id] = g.name;
+    try { localStorage.setItem('kino-gen', JSON.stringify(S.gen)) } catch {}
+  } catch {}
+}
+
+/* ============ data model ============ */
+const courseParts = t => { const m = t.match(/^(.*?)\s+(?:-\s+|(?=Teaches\b))(.*)$/); return m ? [m[1], m[2]] : [t, ''] };
+function rebuild() {
+  const groups = new Map();
+  for (const r of S.rows) {
+    const m = r.m || {};
+    const key = m.id && !['failed', 'skip'].includes(m.status) ? m.type + ':' + m.id : 'row:' + r.id;
+    if (!groups.has(key)) groups.set(key, []); groups.get(key).push(r);
+  }
+  S.items = []; S.byKey = new Map();
+  for (const [key, rows] of groups) {
+    const r0 = rows[0], isRow = key.startsWith('row:'), d = isRow ? null : S.titles.get(key) || null;
+    const it = { key, rows, type: isRow ? null : r0.m.type, id: isRow ? null : r0.m.id, d, kind: r0.kind,
+      added: Math.min(...rows.map(r => r.added || 0)) };
+    it.status = isRow ? (r0.type === 'skip' || r0.m?.status === 'skip' ? 'skip' : (r0.m?.status || 'new')) : (rows.some(r => r.m.status === 'check') ? 'check' : 'ok');
+    it.title = d?.t || (r0.query || r0.title); it.year = d?.y || +r0.qyear || +r0.year || null;
+    it.cat = r0.kind === 'Course' ? 'Course' : isRow ? (it.status === 'skip' ? 'Other' : 'Unmatched')
+      : d?.g?.includes('Documentary') ? 'Documentary' : it.type === 'tv' ? 'Series' : 'Film';
+    S.items.push(it); S.byKey.set(key, it);
+  }
+}
+const lib = () => S.items.filter(i => i.cat !== 'Other' && i.cat !== 'Unmatched');
+function snapItem(key, snap) { return { key, type: snap?.type || null, id: snap?.id || null, title: snap?.t || '?', year: snap?.y || null, snap, d: null, ext: true, cat: snap?.type === 'tv' ? 'Series' : 'Film', rows: [] } }
+function getItem(key) {
+  if (S.byKey.has(key)) return S.byKey.get(key);
+  if (S.extra.has(key)) return S.extra.get(key);
+  const m = S.marks.get(key); if (m?.snap) { const it = snapItem(key, m.snap); S.extra.set(key, it); return it }
+  return null;
+}
+function regRec(x) { const key = x.type + ':' + x.id; if (!S.byKey.has(key) && !S.extra.has(key)) S.extra.set(key, snapItem(key, { t: x.t, y: x.y, p: x.p, b: x.b, type: x.type, id: x.id, r: x.r })); return getItem(key) }
+const uids = (key, f) => Object.keys(S.marks.get(key)?.[f] || {});
+const mine = (key, f) => !!S.marks.get(key)?.[f]?.[S.me];
+const has = (key, f) => S.view === 'me' ? mine(key, f) : uids(key, f).length > 0;
+const uname = uid => S.users[uid]?.name || (uid === S.me ? 'Me' : 'Someone');
+const initials = (key, f) => uids(key, f).map(u => uname(u)[0].toUpperCase()).join('');
+function markedItems(f) {
+  const out = [];
+  for (const [key, m] of S.marks) if (has(key, f)) { const it = getItem(key); if (it) { it._t = Math.max(...Object.values(m[f])); out.push(it) } }
+  return out;
+}
+
+/* ============ marks ============ */
+async function toggleMark(key, f) {
+  const it = getItem(key); if (!it) return;
+  const uid = S.me, on = !mine(key, f);
+  const snap = { t: it.title, y: it.year || null, p: it.d?.p || it.snap?.p || null, b: it.d?.b || it.snap?.b || null, type: it.type || null, id: it.id || null, r: it.d?.r || it.snap?.r || null };
+  const ops = [[f, on]];
+  if (on && f === 'watched' && mine(key, 'wish')) ops.push(['wish', false]);
+  if (on && f === 'anti' && mine(key, 'wish')) ops.push(['wish', false]);
+  if (on && f === 'wish' && mine(key, 'anti')) ops.push(['anti', false]);
+  const m = { ...(S.marks.get(key) || {}) };
+  for (const [ff, o] of ops) { m[ff] = { ...(m[ff] || {}) }; if (o) m[ff][uid] = Date.now(); else delete m[ff][uid] }
+  m.snap = m.snap || snap; S.marks.set(key, m); refreshKey(key);
+  const lbl = { watched: 'Watched', wish: 'Wishlist', anti: 'Anti-top' }[f];
+  toast(`${on ? 'Added to' : 'Removed from'} ${lbl}: ${it.title}`);
+  try { for (const [ff, o] of ops) await store.mark(key, ff, uid, o, snap) } catch (e) { toast('Could not save: ' + e.message) }
+}
+function markBtnsInner(key) {
+  const b = (f, label) => { const on = mine(key, f); const others = uids(key, f).filter(u => u !== S.me).map(uname);
+    return `<button class="b mb ${on ? 'on' : ''}" data-mark="${f}" data-key="${esc(key)}">${label}</button>${others.length ? `<span class="who">${esc(others.join(', '))} ✓</span>` : ''}` };
+  return b('watched', (mine(key, 'watched') ? '✓ ' : '') + 'Watched') + b('wish', (mine(key, 'wish') ? '★ ' : '+ ') + 'Wishlist') + b('anti', 'Anti-top');
+}
+const markBtns = key => `<span class="mk" data-mk="${esc(key)}">${markBtnsInner(key)}</span>`;
+function badgesInner(key) {
+  let h = '';
+  if (uids(key, 'watched').length) h += `<span class="bd w">✓ ${initials(key, 'watched')}</span>`;
+  if (uids(key, 'wish').length) h += `<span class="bd s">★ ${initials(key, 'wish')}</span>`;
+  if (uids(key, 'anti').length) h += `<span class="bd a">↓ ${initials(key, 'anti')}</span>`;
+  return h;
+}
+const qaInner = key => `<button class="qb ${mine(key, 'watched') ? 'on' : ''}" data-mark="watched" data-key="${esc(key)}" title="Watched">${ICON.watched}</button><button class="qb ${mine(key, 'wish') ? 'on' : ''}" data-mark="wish" data-key="${esc(key)}" title="Wishlist">${mine(key, 'wish') ? ICON.wishOn : ICON.wish}</button>`;
+function refreshKey(key) {
+  for (const el of $$(`[data-mk=${sel(key)}]`)) el.innerHTML = markBtnsInner(key);
+  for (const el of $$(`[data-bd=${sel(key)}]`)) el.innerHTML = badgesInner(key);
+  for (const el of $$(`[data-qa=${sel(key)}]`)) el.innerHTML = qaInner(key);
+}
+
+/* ============ rendering ============ */
+function card(it, extra = '') {
+  const p = it.d?.p || it.snap?.p, r = it.d?.r || it.snap?.r;
+  const [h, s] = it.cat === 'Course' ? courseParts(it.title) : [it.title, it.year || ''];
+  return `<div class="card" data-open="${esc(it.key)}"><div class="pw">${p ? `<img loading="lazy" src="${IMG}w342${p}" alt="">` : `<div class="np" style="--h:${parseInt(hash(it.title), 36) % 360}"><b>${esc(h)}</b><span>${esc(s)}</span></div>`}
+<div class="badges" data-bd="${esc(it.key)}">${badgesInner(it.key)}</div>${r ? `<span class="rt">★ ${r}</span>` : ''}
+<div class="qa" data-qa="${esc(it.key)}">${qaInner(it.key)}</div></div>
+<div class="cap">${esc(it.title)} ${it.year ? `<i>${it.year}</i>` : ''}</div>${extra}</div>`;
+}
+function rowHTML(title, items, i) {
+  if (!items.length) return '';
+  return `<section class="row"><div class="rh"><h2>${esc(title)}</h2><span class="n">${items.length}</span>${items.length > 6 ? `<button data-act="all" data-i="${i}">See all ›</button>` : ''}</div>
+<div class="sw"><button class="arr l" data-act="scroll" data-dir="-1">‹</button><div class="strip">${items.slice(0, 40).map(x => card(x)).join('')}</div><button class="arr r" data-act="scroll" data-dir="1">›</button></div></section>`;
+}
+const byRating = (a, b) => (b.d?.r || b.snap?.r || 0) - (a.d?.r || a.snap?.r || 0);
+const byYear = (a, b) => (b.year || 0) - (a.year || 0);
+
+function shell() {
+  const pg = (location.hash.slice(1) || 'home');
+  const nav = [['home', 'Home'], ['explore', 'Explore'], ['lists', 'Our lists'], ['fix', 'Fix matches'], ['settings', 'Settings']];
+  $('#app').innerHTML = `<header><a class="logo" href="#home">Kinotēka</a>
+<nav>${nav.map(([k, l]) => `<a href="#${k}" class="${pg === k ? 'on' : ''}">${l}</a>`).join('')}</nav>
+<div class="hright"><input id="q" type="search" placeholder="Search library" value="${esc(S.q)}" autocomplete="off">
+<button class="pill" data-act="switchprofile" title="Switch profile">${esc(S.users[S.me]?.name || '')}</button><button class="pill" data-act="view" title="Whose marks count">${S.view === 'us' ? '<b>Us</b> / Me' : 'Us / <b>Me</b>'}</button></div></header>
+${store.mode === 'local' ? '<div class="banner">Test mode: data is saved only in this browser. Add the Firebase config to share between devices and with Paula.</div>' : ''}
+<main id="main"></main>`;
+}
+function route() {
+  const pg = location.hash.slice(1) || 'home';
+  if (!$('header')) shell();
+  for (const a of $$('nav a')) a.classList.toggle('on', a.getAttribute('href') === '#' + pg);
+  const f = { home, explore, lists, fix, settings, browse }[pg] || home;
+  f(); window.scrollTo(0, 0);
+}
+
+function home() {
+  const main = $('#main');
+  if (!S.rows.length) { main.innerHTML = `<div class="page"><h1>Welcome</h1><p class="sub">Your library is empty. Go to <a href="#settings">Settings</a>, paste your TMDB token and import your CSV.</p></div>`; return }
+  if (S.q) return searchView();
+  let L = lib();
+  const tabs = [['all', 'Everything'], ['Film', 'Films'], ['Series', 'Series'], ['Documentary', 'Documentaries'], ['Course', 'Courses']];
+  if (S.homeTab !== 'all') L = L.filter(i => i.cat === S.homeTab);
+  const R = []; let pend = null;
+  const add = (t, list) => { if (list.length) { R.push([t, list, pend]); pend = null } };
+  const inTab = it => S.homeTab === 'all' || it.cat === S.homeTab;
+  add('Our wishlist', markedItems('wish').filter(inTab).sort((a, b) => b._t - a._t));
+  add('In the library, not watched yet', L.filter(i => !has(i.key, 'watched') && !has(i.key, 'anti')).sort(byRating));
+  if (S.homeTab === 'all') { add('Films', L.filter(i => i.cat === 'Film').sort(byRating)); add('Series', L.filter(i => i.cat === 'Series').sort(byRating));
+    add('Documentaries', L.filter(i => i.cat === 'Documentary').sort(byRating)); add('Courses', L.filter(i => i.cat === 'Course')) }
+  add('Top rated', L.filter(i => (i.d?.r || 0) >= 7.8 && (i.d?.n || 0) > 50).sort(byRating));
+  const sec = { push: ([, t]) => { pend = t } };
+  const count = f => { const m = new Map(); for (const i of L) for (const k of f(i) || []) m.set(k, (m.get(k) || 0) + 1); return [...m].sort((a, b) => b[1] - a[1]) };
+  const G = count(i => i.d?.g).filter(([, n]) => n >= 4);
+  sec.push([R.length, 'By genre']); for (const [g] of G) add(g, L.filter(i => i.d?.g?.includes(g)).sort(byRating));
+  const D = count(i => i.d?.d).filter(([, n]) => n >= 2).slice(0, 20);
+  sec.push([R.length, 'By director']); for (const [d] of D) add('Directed by ' + d, L.filter(i => i.d?.d?.includes(d)).sort(byYear));
+  const dec = count(i => i.year ? [Math.floor(i.year / 10) * 10] : []).sort((a, b) => b[0] - a[0]);
+  sec.push([R.length, 'By decade']); for (const [d] of dec) add(`${d}s`, L.filter(i => i.year && Math.floor(i.year / 10) * 10 === d).sort(byRating));
+  sec.push([R.length, 'Marked']); add('Watched', markedItems('watched').filter(inTab).sort((a, b) => b._t - a._t)); add('Anti-top', markedItems('anti').filter(inTab));
+  S.homeRows = R;
+  const hero = pickHero(L);
+  let h = hero ? heroHTML(hero) : '';
+  h += `<div class="tabs">${tabs.map(([k, l]) => `<button data-act="htab" data-v="${k}" class="${S.homeTab === k ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  R.forEach(([t, list, s], i) => { if (s) h += `<div class="sec">${s}</div>`; h += rowHTML(t, list, i) });
+  main.innerHTML = h + attrib();
+  if (hero) heroAuto(hero);
+}
+function pickHero(L) {
+  const c = L.filter(i => i.d?.b && i.d?.tr);
+  if (S.heroKey && c.some(i => i.key === S.heroKey)) return S.byKey.get(S.heroKey);
+  const pref = c.filter(i => !has(i.key, 'watched') && !has(i.key, 'anti'));
+  const pool = pref.length ? pref : c; if (!pool.length) return null;
+  const it = pool[Math.floor(Math.random() * pool.length)]; S.heroKey = it.key; return it;
+}
+function heroHTML(it) {
+  const d = it.d, o = d.o.length > 240 ? d.o.slice(0, 237).replace(/\s\S*$/, '') + '…' : d.o;
+  return `<section class="hero" style="--img:url('${IMG}w1280${d.b}')"><div class="hv" id="hv"></div><div class="hshade"></div>
+<div class="hinfo"><div class="eyebrow">${esc(it.cat)} · ${it.year || ''} · ★ ${d.r}</div><h1>${esc(it.title)}</h1><p>${esc(o)}</p>
+<div class="btns"><button class="b pri" data-act="herotrailer">▶ Trailer</button><button class="b ghost" data-open="${esc(it.key)}">More info</button>${markBtns(it.key)}
+<button class="b ghost" data-act="mute" id="mute" style="display:none">Sound on</button><button class="b ghost" data-act="shuffle" title="Another one">⟳</button></div></div></section>`;
+}
+const yt = (k, o = '') => `https://www.youtube-nocookie.com/embed/${k}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}${o}`;
+function heroAuto(it) {
+  clearTimeout(S._ht);
+  if (!matchMedia('(hover:hover) and (min-width:900px)').matches) return;
+  S._ht = setTimeout(() => heroPlay(it, true), 2500);
+}
+function heroPlay(it, muted) {
+  const hv = $('#hv'); if (!hv) return;
+  if (hv.firstChild) { ytCmd(hv.firstChild, muted ? 'mute' : 'unMute'); if (!muted) ytCmd(hv.firstChild, 'playVideo'); setMuteBtn(muted); return }
+  hv.innerHTML = `<iframe allow="autoplay; encrypted-media" src="${yt(it.d.tr, `&autoplay=1&controls=0&loop=1&playlist=${it.d.tr}${muted ? '&mute=1' : ''}`)}"></iframe>`;
+  setTimeout(() => hv.classList.add('on'), 900); setMuteBtn(muted);
+}
+function setMuteBtn(muted) { const b = $('#mute'); if (b) { b.style.display = ''; b.textContent = muted ? 'Sound on' : 'Mute'; b.dataset.muted = muted ? '1' : '' } }
+function ytCmd(ifr, func) { try { ifr.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*') } catch {} }
+
+function searchView() {
+  const q = norm(S.q);
+  const hits = S.items.filter(i => i.cat !== 'Other').filter(i => [i.title, i.d?.ot, ...(i.d?.d || []), ...(i.d?.c || []), ...(i.d?.g || []), ...i.rows.map(r => r.title)].some(s => norm(s).includes(q)));
+  $('#main').innerHTML = `<div class="page"><h1>“${esc(S.q)}”</h1><p class="sub">${hits.length} in your library · titles, directors, cast, genres</p><div class="grid">${hits.sort(byRating).map(x => card(x)).join('')}</div></div>`;
+}
+function browse() {
+  if (!S.browse) { location.hash = 'home'; return }
+  const sorted = [...S.browse.items].sort(S.browseSort === 'year' ? byYear : S.browseSort === 'title' ? (a, b) => a.title.localeCompare(b.title) : byRating);
+  $('#main').innerHTML = `<div class="page"><h1>${esc(S.browse.title)}</h1><div class="flt"><span class="sub" style="margin:0">${sorted.length} titles</span>
+<label>Sort <select class="in" data-ch="bsort"><option value="rating">Rating</option><option value="year" ${S.browseSort === 'year' ? 'selected' : ''}>Year</option><option value="title" ${S.browseSort === 'title' ? 'selected' : ''}>A–Z</option></select></label></div>
+<div class="grid">${sorted.map(x => card(x)).join('')}</div></div>`;
+}
+function openBrowse(title, items) { S.browse = { title, items }; if (location.hash === '#browse') browse(); else location.hash = 'browse' }
+
+/* ---------- modal ---------- */
+async function openModal(key) {
+  const it = getItem(key); if (!it) return;
+  S.modalKey = key; renderModal(it);
+  $('#modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; $('#modal').scrollTop = 0;
+  if (it.type && !it.d) { try { it.d = await liveDetails(it.type, it.id); if (S.modalKey === key) renderModal(it) } catch (e) { toast(e.message) } }
+  if (it.type) loadProviders(it);
+}
+function closeModal() { $('#modal').classList.add('hidden'); $('#modal').innerHTML = ''; document.body.style.overflow = ''; S.modalKey = null }
+function renderModal(it) {
+  const d = it.d || {}, b = d.b || it.snap?.b;
+  const meta = [it.year, d.ns ? `${d.ns} season${d.ns > 1 ? 's' : ''}` : d.rt ? `${Math.floor(d.rt / 60) ? Math.floor(d.rt / 60) + 'h ' : ''}${d.rt % 60}m` : '', d.r ? `★ ${d.r} (${d.n})` : '', (d.co || []).join(', '), it.cat].filter(Boolean).join(' · ');
+  const L = new Set(S.items.map(i => i.key));
+  const recs = (d.recs || []).filter((x, i, a) => a.findIndex(y => y.id === x.id && y.type === x.type) === i);
+  const recItems = recs.map(regRec).filter(Boolean).sort((a, b) => L.has(a.key) - L.has(b.key)).slice(0, 18);
+  const link = (act, v) => `<button class="lk" data-act="${act}" data-v="${esc(v)}">${esc(v)}</button>`;
+  $('#modal').innerHTML = `<div class="mbox"><button class="x" data-act="close">×</button>
+<div class="mhero" id="mhero" style="--img:${b ? `url('${IMG}w1280${b}')` : 'linear-gradient(135deg,#2a2a33,#111)'}"><div class="mtr" id="mtr"></div>
+<div class="mhead"><h2>${esc(d.t || it.title)}</h2><div class="meta">${esc(meta)}</div>
+<div class="btns">${d.tr ? `<button class="b pri" data-act="mtrailer">▶ Trailer</button>` : ''}${markBtns(it.key)}</div></div></div>
+<div class="mbody"><div class="cols"><div><p>${esc(d.o || (it.cat === 'Course' ? 'Course (not on TMDB).' : it.type ? 'Loading…' : 'No TMDB match yet.'))}</p></div>
+<div class="side">${d.d?.length ? `<div><span class="l">${it.type === 'tv' ? 'Created by' : 'Director'}:</span> ${d.d.map(x => link('person', x)).join(', ')}</div>` : ''}
+${d.g?.length ? `<div><span class="l">Genres:</span> ${d.g.map(x => link('genre', x)).join(', ')}</div>` : ''}
+${d.c?.length ? `<div><span class="l">Cast:</span> ${d.c.map(x => link('person', x)).join(', ')}</div>` : ''}
+${d.ot && d.ot !== d.t ? `<div><span class="l">Original title:</span> ${esc(d.ot)}</div>` : ''}
+${it.type ? `<div><a href="https://www.themoviedb.org/${it.type}/${it.id}" target="_blank" rel="noopener">TMDB page ↗</a></div>` : ''}
+${it.rows?.length ? `<div><span class="l">In your list as:</span><div class="files">${it.rows.map(r => esc(r.title)).join('<br>')}</div><button class="lk" data-act="fixrow" data-v="${esc(it.rows[0].id)}">Wrong match? Fix it</button></div>` : ''}</div></div>
+${it.type ? `<h3>Where to watch in Latvia</h3><div id="prov" class="sub">Checking…</div>` : ''}
+${recItems.length ? `<h3>More like this</h3><div class="grid small">${recItems.map(x => card(x)).join('')}</div>` : ''}</div></div>`;
+}
+async function loadProviders(it) {
+  const reg = S.settings.region || 'LV', el = $('#prov'); if (!el) return;
+  try {
+    const k = 'p:' + it.key; if (!S.live.has(k)) S.live.set(k, tmdb(`/${it.type}/${it.id}/watch/providers`));
+    const j = await S.live.get(k); const R = j.results?.[reg];
+    if (S.modalKey !== it.key) return;
+    if (!R) { el.innerHTML = `Not on any service in ${reg} right now.`; return }
+    const G = [['flatrate', 'Stream'], ['free', 'Free'], ['ads', 'Free with ads'], ['rent', 'Rent'], ['buy', 'Buy']];
+    el.innerHTML = `<div class="prov">${G.filter(([g]) => R[g]?.length).map(([g, l]) => `<div class="pg"><span>${l}</span>${R[g].map(p => `<img src="${IMG}w92${p.logo_path}" title="${esc(p.provider_name)}" alt="${esc(p.provider_name)}">`).join('')}</div>`).join('') || 'Listed, but no options shown.'}</div>
+<p style="font-size:12px;margin-top:10px"><a href="${esc(R.link)}" target="_blank" rel="noopener">See links on TMDB ↗</a> · Data: JustWatch</p>`;
+  } catch (e) { el.textContent = e.message }
+}
+
+/* ---------- explore ---------- */
+function explore() {
+  const main = $('#main'); const L = lib().filter(i => i.d?.recs);
+  if (!L.length) { main.innerHTML = `<div class="page"><h1>Explore</h1><p class="sub">Nothing to explore yet. Import your list and run matching in <a href="#settings">Settings</a>.</p></div>`; return }
+  loadGenres().then(() => { if (location.hash === '#explore' && !S._genOk && Object.keys(S.gen).length) { S._genOk = 1; explore() } });
+  const e = S.ex;
+  const genres = [...new Set(L.flatMap(i => i.d.g))].sort(), dirs = [...new Map(L.flatMap(i => i.d.d).map(d => [d, 1])).keys()].sort();
+  let seeds = L;
+  if (e.seed === 'watched') seeds = L.filter(i => has(i.key, 'watched'));
+  else if (e.seed === 'wish') seeds = [...L.filter(i => has(i.key, 'wish'))];
+  else if (e.seed.startsWith('g:')) seeds = L.filter(i => i.d.g.includes(e.seed.slice(2)));
+  else if (e.seed.startsWith('d:')) seeds = L.filter(i => i.d.d.includes(e.seed.slice(2)));
+  else if (e.seed.startsWith('c:')) seeds = L.filter(i => i.cat === e.seed.slice(2));
+  const libKeys = new Set(S.items.map(i => i.key)), agg = new Map();
+  const addFrom = (it, w) => { for (const x of it.d.recs) { const k = x.type + ':' + x.id; if (libKeys.has(k)) continue;
+    const a = agg.get(k) || { x, s: 0, why: [] }; a.s += w * (x.s === 'r' ? 1 : 0.6); if (w > 0 && !a.why.includes(it.title)) a.why.push(it.title); agg.set(k, a) } };
+  for (const it of seeds) addFrom(it, has(it.key, 'watched') ? 1.3 : has(it.key, 'anti') ? 0 : 1);
+  for (const it of L.filter(i => has(i.key, 'anti'))) addFrom(it, -1);
+  const gid = e.genre ? Object.entries(S.gen).filter(([, n]) => n === e.genre).map(([i]) => +i) : null;
+  let res = [...agg.entries()].filter(([k, a]) => a.s > 0 && a.x.t
+    && !uids(k, 'anti').length && !(e.hide && (has(k, 'watched') || has(k, 'wish')))
+    && (e.type === 'both' || a.x.type === e.type) && (a.x.r || 0) >= +e.min && (!e.from || (a.x.y || 0) >= +e.from)
+    && (!gid || a.x.g.some(g => gid.includes(g))));
+  res.forEach(([, a]) => a.score = a.s + ((a.x.r || 0) - 6.5) * 0.25 + Math.log10(1 + a.x.n) * 0.15);
+  res.sort((a, b) => b[1].score - a[1].score); res = res.slice(0, 150);
+  const opt = (v, l, cur) => `<option value="${esc(v)}" ${cur === v ? 'selected' : ''}>${esc(l)}</option>`;
+  const allG = [...new Set(Object.values(S.gen))].sort();
+  main.innerHTML = `<div class="page"><h1>Explore</h1><p class="sub">From ${seeds.length} of your titles: what TMDB recommends next, minus what's already in your library${e.hide ? ' or marked' : ''}.</p>
+<div class="flt"><label>Based on <select class="in" data-ch="ex.seed">${opt('all', 'Whole library', e.seed)}${opt('watched', 'What we watched', e.seed)}${opt('wish', 'Our wishlist', e.seed)}
+<optgroup label="Type">${['Film', 'Series', 'Documentary'].map(c => opt('c:' + c, c, e.seed)).join('')}</optgroup>
+<optgroup label="Genre">${genres.map(g => opt('g:' + g, g, e.seed)).join('')}</optgroup><optgroup label="Director">${dirs.map(d => opt('d:' + d, d, e.seed)).join('')}</optgroup></select></label>
+<label>Show <select class="in" data-ch="ex.type">${opt('both', 'Films + series', e.type)}${opt('movie', 'Films', e.type)}${opt('tv', 'Series', e.type)}</select></label>
+<label>Genre <select class="in" data-ch="ex.genre">${opt('', 'Any', e.genre)}${allG.map(g => opt(g, g, e.genre)).join('')}</select></label>
+<label>Min ★ <select class="in" data-ch="ex.min">${['0', '6', '6.5', '7', '7.5', '8'].map(v => opt(v, v === '0' ? 'Any' : v, e.min)).join('')}</select></label>
+<label>From <select class="in" data-ch="ex.from">${opt('', 'Any year', e.from)}${['1960', '1980', '1990', '2000', '2010', '2020'].map(v => opt(v, v + '+', e.from)).join('')}</select></label>
+<label><input type="checkbox" data-ch="ex.hide" ${e.hide ? 'checked' : ''}> Hide marked</label></div>
+${res.length ? `<div class="grid">${res.map(([, a]) => card(regRec(a.x), `<div class="why">because ${esc(a.why.slice(0, 2).join(', '))}${a.why.length > 2 ? ` +${a.why.length - 2}` : ''}</div>`)).join('')}</div>` : '<p class="empty">Nothing left with these filters.</p>'}</div>`;
+}
+
+/* ---------- lists ---------- */
+function lists() {
+  const t = S.listTab, items = markedItems(t);
+  const so = S.listSort === 'rating' ? byRating : S.listSort === 'year' ? byYear : (a, b) => b._t - a._t;
+  const tabs = [['wish', 'Wishlist'], ['watched', 'Watched'], ['anti', 'Anti-top']];
+  $('#main').innerHTML = `<div class="page"><h1>Our lists</h1><p class="sub">${S.view === 'us' ? 'Both of us' : 'Only mine'} · switch with the Us / Me button</p>
+<div class="flt">${tabs.map(([k, l]) => `<button class="b sm ${t === k ? 'pri' : ''}" data-act="ltab" data-v="${k}">${l} (${markedItems(k).length})</button>`).join('')}
+<label>Sort <select class="in" data-ch="lsort"><option value="added">Recently marked</option><option value="rating" ${S.listSort === 'rating' ? 'selected' : ''}>Rating</option><option value="year" ${S.listSort === 'year' ? 'selected' : ''}>Year</option></select></label></div>
+${items.length ? `<div class="grid">${items.sort(so).map(x => card(x)).join('')}</div>` : '<p class="empty">Empty. Use the buttons on any title.</p>'}</div>`;
+}
+
+/* ---------- fix ---------- */
+function fix() {
+  const rows = S.rows, st = s => rows.filter(r => (r.m?.status || (r.type === 'skip' ? 'skip' : 'new')) === s);
+  const failed = st('failed'), check = st('check'), skip = rows.filter(r => r.type === 'skip' || r.m?.status === 'skip'), fresh = st('new').filter(r => r.type !== 'skip');
+  const ok = rows.length - failed.length - check.length - skip.length - fresh.length;
+  const focus = S.fixFocus ? rows.filter(r => r.id === S.fixFocus) : [];
+  $('#main').innerHTML = `<div class="page"><h1>Fix matches</h1>
+<p class="sub">✓ ${ok} matched · ? ${check.length} to check · ✕ ${failed.length} not found · – ${skip.length} skipped (courses, personal files)${fresh.length ? ` · ${fresh.length} not matched yet` : ''}</p>
+<div class="flt"><button class="b" data-act="runmatch">${fresh.length ? `Match ${fresh.length} new titles` : 'Re-run matching'}</button>${failed.length ? '<button class="b" data-act="retryfailed">Retry not-found</button>' : ''}</div>
+${focus.length ? `<h3>Selected</h3>${focus.map(fixRow).join('')}` : ''}
+${failed.length ? `<h3>Not found on TMDB (${failed.length})</h3>${failed.map(fixRow).join('')}` : ''}
+${check.length ? `<h3>Please check (${check.length})</h3><p class="sub">Matched, but the title or year isn't a clean fit. Click “Looks right” or pick another.</p>${check.map(fixRow).join('')}` : ''}
+${!failed.length && !check.length ? '<p class="empty">Nothing to fix. 🎬</p>' : ''}
+<details><summary>Skipped (${skip.length}): courses and personal files. You can still search them.</summary>${skip.map(fixRow).join('')}</details></div>`;
+}
+function miniHTML(x, attrs) {
+  return `<button class="mini" ${attrs}>${x.p ? `<img src="${IMG}w92${x.p}" alt="">` : '<span class="ph"></span>'}<span><b>${esc(x.t)}</b><small>${x.y || '—'} · ${x.type === 'tv' ? 'Series' : 'Film'}${x.n != null ? ` · ${x.n} votes` : ''}</small></span></button>`;
+}
+function fixRow(r) {
+  const m = r.m || {}, k = m.id ? m.type + ':' + m.id : null, d = k && S.titles.get(k);
+  return `<div class="fix" data-row="${esc(r.id)}"><div><b>${esc(r.title)}</b> <span class="sub">${esc(r.kind)} · ${esc(r.year || 'no year')}</span>
+<div class="q">searched: “${esc(r.query || r.title)}”${r.qyear ? ' · ' + esc(r.qyear) : ''}</div>
+<form data-form="search"><input class="in" name="q" value="${esc(r.query || r.title)}" style="flex:1;min-width:140px"><input class="in" name="y" value="${esc(r.qyear || '')}" placeholder="year" style="width:70px">
+<select class="in" name="t"><option value="movie">Film</option><option value="tv" ${r.type === 'tv' ? 'selected' : ''}>Series</option></select><button class="b sm">Search</button></form></div>
+<div>${d ? `<div class="sub" style="margin-bottom:6px">Current match:</div>${miniHTML({ ...d, type: m.type }, `data-open="${esc(k)}"`)}` : '<div class="sub">No match.</div>'}
+<div class="btns" style="margin-top:8px">${m.status === 'check' ? '<button class="b sm" data-act="okrow">Looks right</button>' : ''}${r.type !== 'skip' && m.status !== 'skip' ? '<button class="b sm" data-act="skiprow">Not on TMDB</button>' : ''}</div></div>
+<div class="res"></div></div>`;
+}
+async function setRowMatch(id, m) {
+  const r = S.rows.find(x => x.id === id); if (!r) return;
+  r.m = m; store.put('library', id, { m });
+  if (m.id) { const k = m.type + ':' + m.id; if (!S.titles.has(k)) { const d = await fetchDetails(m.type, m.id); S.titles.set(k, d); store.put('titles', k, d) } }
+  await store.flush(); rebuild();
+}
+
+/* ---------- settings ---------- */
+function settings() {
+  const me = S.users[S.me] || {};
+  $('#main').innerHTML = `<div class="page"><h1>Settings</h1>
+<div class="panel"><h3>Profile: ${esc(me.name || '')}</h3><p class="sub">Login: ${esc(S.user.email)} · each device remembers its profile</p><form data-form="name" class="flt"><input class="in" name="n" value="${esc(me.name || '')}" placeholder="Your name"><button class="b sm">Rename profile</button><button type="button" class="b sm" data-act="switchprofile">Switch profile</button>${store.mode === 'cloud' ? '<button type="button" class="b sm" data-act="signout">Sign out</button>' : ''}</form></div>
+<div class="panel"><h3>TMDB</h3><p class="sub">Paste the API Read Access Token once. It is stored for both of you.</p>
+<form data-form="tmdb" class="flt"><input class="in" name="t" type="password" value="${esc(S.settings.tmdb || '')}" placeholder="eyJ…" style="flex:1;min-width:220px">
+<label>Region <input class="in" name="r" value="${esc(S.settings.region || 'LV')}" style="width:56px"></label><button class="b sm">Save</button></form></div>
+<div class="panel"><h3>Import your list</h3><p class="sub">CSV with columns <code>kind,title,year</code> (optional: <code>query,type,qyear</code>). Re-importing the same file adds no duplicates.</p>
+<input type="file" accept=".csv,text/csv" data-ch="csv"> <span class="sub">${S.rows.length} rows in library</span></div>
+<div class="panel"><h3>Match with TMDB</h3><p class="sub">Finds each title, then fetches posters, trailers, genres and recommendations.</p>
+<div class="btns"><button class="b" data-act="runmatch">Match new titles</button><button class="b" data-act="refresh">Refresh all details</button></div></div>
+<div class="panel"><h3>Backup</h3><div class="btns"><button class="b" data-act="backup">Download backup (JSON)</button></div></div>
+${attrib()}</div>`;
+}
+const attrib = () => `<p class="attrib" style="padding:0 4vw">This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data by JustWatch.</p>`;
+
+/* ---------- import & matching ---------- */
+function parseCSV(t) {
+  const out = []; let row = [], f = '', q = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++ } else q = false } else f += c }
+    else if (c === '"') q = true; else if (c === ',') { row.push(f); f = '' }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && t[i + 1] === '\n') i++; row.push(f); f = ''; if (row.some(x => x !== '')) out.push(row); row = [] }
+    else f += c;
+  }
+  row.push(f); if (row.some(x => x !== '')) out.push(row); return out;
+}
+async function importCSV(text) {
+  const [h, ...data] = parseCSV(text.replace(/^﻿/, '')); const ix = n => h.findIndex(x => x.trim().toLowerCase() === n);
+  const I = { kind: ix('kind'), title: ix('title'), year: ix('year'), query: ix('query'), type: ix('type'), qyear: ix('qyear') };
+  if (I.title < 0) { toast('No "title" column found'); return }
+  const have = new Map(S.rows.map(r => [r.id, r])); let n = 0;
+  for (const c of data) {
+    const g = k => I[k] >= 0 ? (c[I[k]] || '').trim() : '';
+    const title = g('title'); if (!title) continue;
+    const kind = g('kind') || 'Film', year = g('year');
+    const row = { kind, title, year, query: g('query') || title, type: g('type') || (kind === 'Course' ? 'skip' : kind === 'Series' ? 'tv' : 'movie'), qyear: g('qyear') || year };
+    const id = 'r' + hash(title + '|' + year);
+    const old = have.get(id);
+    if (old) Object.assign(old, row); else { row.added = Date.now(); have.set(id, { id, ...row }); n++ }
+    store.put('library', id, row);
+  }
+  await store.flush(); S.rows = [...have.values()]; rebuild();
+  toast(`Imported: ${n} new, ${data.length - n} updated`);
+  if (S.settings.tmdb) runMatching(); else settings();
+}
+async function runMatching({ refresh = false, retry = false } = {}) {
+  if (S.busy) return toast('Already running…');
+  try { await tmdb('/configuration') } catch (e) { return toast(e.message) }
+  S.busy = true;
+  try {
+    const todo = S.rows.filter(r => r.type !== 'skip' && (!r.m || (retry && r.m.status === 'failed')));
+    let done = 0; progress(0, todo.length, 'Matching');
+    await pool(todo, 6, async r => { r.m = await matchRow(r); store.put('library', r.id, { m: r.m }); progress(++done, todo.length, 'Matching') });
+    await store.flush();
+    const keys = [...new Set(S.rows.filter(r => r.m?.id && !['failed', 'skip'].includes(r.m.status)).map(r => r.m.type + ':' + r.m.id))];
+    const need = keys.filter(k => refresh || !S.titles.has(k));
+    done = 0; progress(0, need.length, 'Fetching details');
+    await pool(need, 6, async k => { const [t, id] = k.split(':'); const d = await fetchDetails(t, +id); S.titles.set(k, d); store.put('titles', k, d); progress(++done, need.length, 'Fetching details') });
+    await store.flush(); rebuild();
+    const c = s => S.rows.filter(r => r.m?.status === s).length;
+    toast(`Done. ${c('failed')} not found, ${c('check')} to check → see Fix matches`, 6000);
+  } catch (e) { toast(e.message, 5000) }
+  S.busy = false; progress(); route();
+}
+
+/* ============ events ============ */
+const A = {
+  close: closeModal,
+  view: () => { S.view = S.view === 'us' ? 'me' : 'us'; try { localStorage.setItem('kino-view', S.view) } catch {} shell(); route() },
+  htab: el => { S.homeTab = el.dataset.v; S.heroKey = null; home() },
+  all: el => { const [t, l] = S.homeRows[+el.dataset.i]; openBrowse(t, l) },
+  scroll: el => { const s = el.parentElement.querySelector('.strip'); s.scrollBy({ left: +el.dataset.dir * s.clientWidth * 0.85, behavior: 'smooth' }) },
+  shuffle: () => { S.heroKey = null; home() },
+  herotrailer: () => { const it = S.byKey.get(S.heroKey); clearTimeout(S._ht); if (it) heroPlay(it, false) },
+  mute: el => { const ifr = $('#hv iframe'); if (!ifr) return; const m = !el.dataset.muted; ytCmd(ifr, m ? 'mute' : 'unMute'); setMuteBtn(m) },
+  mtrailer: () => { const it = getItem(S.modalKey); if (!it?.d?.tr) return; $('#mtr').innerHTML = `<iframe allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="${yt(it.d.tr, '&autoplay=1')}"></iframe>`; $('#mhero').classList.add('playing'); const h = $('#hv iframe'); if (h) ytCmd(h, 'mute') },
+  genre: el => { const g = el.dataset.v; closeModal(); openBrowse(g, lib().filter(i => i.d?.g?.includes(g))) },
+  person: el => { const p = el.dataset.v; closeModal(); openBrowse(p, lib().filter(i => i.d?.d?.includes(p) || i.d?.c?.includes(p))) },
+  fixrow: el => { S.fixFocus = el.dataset.v; closeModal(); if (location.hash === '#fix') fix(); else location.hash = 'fix' },
+  ltab: el => { S.listTab = el.dataset.v; lists() },
+  runmatch: () => runMatching(),
+  retryfailed: () => runMatching({ retry: true }),
+  refresh: () => runMatching({ refresh: true }),
+  okrow: async el => { const id = el.closest('[data-row]').dataset.row; const r = S.rows.find(x => x.id === id); await setRowMatch(id, { ...r.m, status: 'manual' }); toast('Confirmed'); fix() },
+  skiprow: async el => { const id = el.closest('[data-row]').dataset.row; await setRowMatch(id, { status: 'skip' }); toast('Marked as not on TMDB'); fix() },
+  pick: async el => { const id = el.closest('[data-row]').dataset.row; el.disabled = true; try { await setRowMatch(id, { status: 'manual', type: el.dataset.t, id: +el.dataset.id }); toast('Matched'); if (S.fixFocus === id) S.fixFocus = null; fix() } catch (e) { toast(e.message) } },
+  profile: el => pickProfile(el.dataset.v),
+  switchprofile: () => { closeModal(); renderProfiles() },
+  signout: async () => { await store.signOut(); location.reload() },
+  backup: () => { const blob = new Blob([JSON.stringify({ rows: S.rows, marks: Object.fromEntries(S.marks), settings: { ...S.settings, tmdb: undefined }, exported: new Date().toISOString() }, null, 1)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `kinoteka-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click() },
+};
+document.addEventListener('click', e => {
+  const mb = e.target.closest('[data-mark]'); if (mb) { e.stopPropagation(); toggleMark(mb.dataset.key, mb.dataset.mark); return }
+  const ac = e.target.closest('[data-act]'); if (ac) { A[ac.dataset.act]?.(ac); return }
+  const op = e.target.closest('[data-open]'); if (op) { openModal(op.dataset.open); return }
+  if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.modalKey) closeModal() });
+document.addEventListener('input', e => {
+  if (e.target.id === 'q') { clearTimeout(S._qt); S._qt = setTimeout(() => { S.q = e.target.value.trim(); if ((location.hash || '#home') !== '#home') location.hash = 'home'; else home() }, 200) }
+});
+document.addEventListener('change', async e => {
+  const k = e.target.dataset.ch; if (!k) return;
+  if (k.startsWith('ex.')) { const f = k.slice(3); S.ex[f] = e.target.type === 'checkbox' ? e.target.checked : e.target.value; explore() }
+  else if (k === 'lsort') { S.listSort = e.target.value; lists() }
+  else if (k === 'bsort') { S.browseSort = e.target.value; browse() }
+  else if (k === 'csv') { const f = e.target.files[0]; if (f) importCSV(await f.text()) }
+});
+document.addEventListener('submit', async e => {
+  const f = e.target.closest('[data-form]'); if (!f) return; e.preventDefault();
+  const fd = new FormData(f), t = f.dataset.form;
+  if (t === 'login') {
+    $('.err').textContent = '';
+    try { S.user = await store.signIn(fd.get('e').trim(), fd.get('p')); await loadAll() } catch (er) { $('.err').textContent = er.code === 'auth/invalid-credential' ? 'Wrong email or password' : (er.code || er.message) }
+  } else if (t === 'name') {
+    const n = fd.get('n').trim(); if (!n) return; S.users[S.me] = { ...(S.users[S.me] || {}), name: n }; store.put('users', S.me, { name: n }); await store.flush(); toast('Saved')
+  } else if (t === 'profile') {
+    const n = fd.get('n').trim(); if (!n) return; const id = 'p' + hash(n + Date.now());
+    S.users[id] = { name: n }; store.put('users', id, { name: n }); await store.flush(); pickProfile(id)
+  } else if (t === 'tmdb') {
+    S.settings.tmdb = fd.get('t').trim(); S.settings.region = (fd.get('r') || 'LV').trim().toUpperCase();
+    store.put('meta', 'settings', { tmdb: S.settings.tmdb, region: S.settings.region }); await store.flush();
+    try { await tmdb('/configuration'); toast('TMDB token works ✓') } catch (er) { toast(er.message, 5000) }
+  } else if (t === 'search') {
+    const box = f.closest('[data-row]').querySelector('.res'); box.innerHTML = '<span class="sub">Searching…</span>';
+    try { const res = await searchTMDB(fd.get('q'), fd.get('t'), +fd.get('y') || 0); const all = res.length || !+fd.get('y') ? res : await searchTMDB(fd.get('q'), fd.get('t'), 0);
+      box.innerHTML = all.length ? all.slice(0, 10).map(x => miniHTML(x, `data-act="pick" data-t="${x.type}" data-id="${x.id}"`)).join('') : '<span class="sub">No results. Try another spelling, or switch Film/Series.</span>' }
+    catch (er) { box.innerHTML = `<span class="sub">${esc(er.message)}</span>` }
+  }
+});
+window.addEventListener('hashchange', () => { if (S.user && S.me) route() });
+
+/* ============ boot ============ */
+function renderLogin(msg = '') {
+  $('#app').innerHTML = `<div class="login"><h1 class="logo" style="font-size:34px">Kinotēka</h1><p class="sub">Private. Sign in.</p>
+<form data-form="login"><input class="in" name="e" type="email" placeholder="Email" autocomplete="username" required><input class="in" name="p" type="password" placeholder="Password" autocomplete="current-password" required>
+<div class="err">${esc(msg)}</div><button class="b pri" style="width:100%;justify-content:center">Sign in</button></form></div>`;
+}
+function renderProfiles() {
+  const P = Object.entries(S.users);
+  $('#app').innerHTML = `<div class="login"><h1 class="logo" style="font-size:34px">Who's watching?</h1>
+<div class="btns" style="margin:18px 0">${P.map(([id, u]) => `<button class="b" data-act="profile" data-v="${esc(id)}" style="font-size:18px;padding:14px 20px">${esc(u.name)}</button>`).join('')}</div>
+<form data-form="profile" class="btns"><input class="in" name="n" placeholder="${P.length ? 'Add another profile' : 'Your name'}" style="flex:1"><button class="b pri">Add</button></form></div>`;
+}
+function pickProfile(id) {
+  S.me = id; try { localStorage.setItem('kino-profile', id) } catch {}
+  shell(); route();
+}
+async function loadAll() {
+  $('#app').innerHTML = '<div class="login"><p class="sub">Loading your library…</p></div>';
+  try { S.view = localStorage.getItem('kino-view') || 'us' } catch {}
+  const [rows, titles, settings, users] = await Promise.all([store.all('library'), store.all('titles'), store.get('meta', 'settings'), store.all('users')]);
+  S.rows = rows; S.titles = new Map(titles.map(({ id, ...d }) => [id, d])); S.settings = settings || {}; S.users = Object.fromEntries(users.map(({ id, ...u }) => [id, u]));
+  rebuild();
+  let saved = null; try { saved = localStorage.getItem('kino-profile') } catch {}
+  if (saved && S.users[saved]) pickProfile(saved); else renderProfiles();
+  let first = true;
+  store.watch('marks', list => {
+    const old = S.marks; S.marks = new Map(list.map(({ id, ...m }) => [id, m]));
+    if (first) { first = false; if (S.me && $('header')) route(); return }
+    for (const k of new Set([...old.keys(), ...S.marks.keys()])) if (JSON.stringify(old.get(k)) !== JSON.stringify(S.marks.get(k))) refreshKey(k);
+  });
+}
+(async () => {
+  try {
+    store = CFG.firebase ? await firebaseStore(CFG.firebase) : localStore();
+    S.user = await store.init();
+    if (!S.user) return renderLogin();
+    await loadAll();
+  } catch (e) { console.error(e); $('#app').innerHTML = `<div class="login"><h1>Something broke</h1><p class="sub">${esc(e.code || e.message)}</p></div>` }
+})();
+</script>
+</body>
+</html>
